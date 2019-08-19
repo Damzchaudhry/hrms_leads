@@ -1,0 +1,159 @@
+{% extends "admin/base_site.html" %}
+{% load admin_urls %}
+{% load i18n l10n %}
+
+{% block content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+{% if cl.formset or action_form %}
+    <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+  {% endif %}
+
+ <style type="text/css">
+
+
+  table {
+  width:100%;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+   height: 5px;
+
+}
+th, td {
+
+  padding: 15px;
+  text-align: left;
+   height: 5px;
+
+}
+table#t01 tr:nth-child(even) {
+  background-color: #eee;
+  height: 5px;
+}
+table#t01 tr:nth-child(odd) {
+ background-color: #fff;
+ height: 5px;
+}
+table#t01 th {
+  background-color: #b8d3ff;
+  color: black;
+  font-weight: bold;
+</style>
+ <style type="text/css">
+ 	#form1{
+ 		width: 500px;
+    height: auto;
+ 		border:1px solid teal;
+ 		box-shadow: 0px 10px 20px black;
+
+ 	}
+  #select{
+    border:1px solid teal;
+    box-shadow: 0px 5px 15px;
+     width: 150px;
+        height: 35px;
+  }
+
+  	#button{
+  	    width: 150px;
+  	    height: 35px;
+  	          text-align: center;
+
+  	  
+  		background-color:#d83131;
+  		border-radius: 5px;
+  		color: white;
+      border:1px solid teal;
+  		font-weight: normal;
+  		
+  		float: right;
+      box-shadow:1px  5px 10px black;
+
+
+      
+  	}
+   
+    }
+  	#button:hover{
+  		background: darkred;
+
+  	}
+  	#head{
+  		padding-top: 5px;
+       color:white;
+       padding-right: 90px;
+       padding-left: 200px;
+       background-color: #262b28;
+       height: 30px;font-size: 16px;
+  	}
+
+  		</style>
+  
+<form name="Email" style="width: 500px;height: auto; "  method="post">
+  {% csrf_token %}
+  <div id="form1">
+  <header id="head">Send Email</header>
+  <div style="padding:10px;" >
+
+
+<table id="t01">
+  <tr>
+    <th>Name</th>
+    <th>Emails</th>
+  </tr>
+  {% for order in queryset %}
+
+
+
+
+
+  
+
+   
+  
+  <tr>
+    <td>{{ order.name }} </td>
+    <td> {{ order.email }}</td>
+   
+  </tr>
+
+
+
+  {% endfor %}
+
+</table>
+<p style="color:darkred;font-weight: normal;">
+Are you sure you want to send email to the selected User?
+</p> 
+</div>
+
+</div>
+ <br>
+
+    <div>
+      <select id="select" name="select" required="False">
+        <option value="">---Choose-template----</option>
+  <option value="Confirmation">Confirmation Email</option>
+  <option value="Suspension">Suspension Email</option>
+
+</select>
+    {% for obj in queryset %}
+    <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk|unlocalize }}">
+    {% endfor %}
+    <input type="hidden" name="action" value="Email">
+    <input type="hidden" name="apply" value="yes">
+    <input id="button" type="submit" value="{% trans 'Yes, I’m sure' %}">
+
+</form>
+
+
+<script type="text/javascript">
+  $(document).ready(function(){ 
+  $('#button').click(function(){ 
+    alert("Are You sure you want to send a" + $('#select :selected').text() + " mail");
+  });
+});
+</script>
+{% endblock %}

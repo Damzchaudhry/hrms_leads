@@ -1,0 +1,67 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+ <style type="text/css">
+
+ 	#form1{
+ 		width: 765px;
+ 		border:1px solid teal;
+ 		box-shadow: 0px 10px 20px black;
+
+ 	}
+
+  	#button{
+  	    width: 150px;
+  	    height: 37px;
+  	    
+  	  
+  		background-color:#d83131;
+  		border-radius: 5px;
+  		color: white;
+  		font-weight: normal;
+  		position: relative;
+  		float: right;
+
+      
+  	}
+  	#button:hover{
+  		background: darkred;
+
+  	}
+  	#head{
+  		padding-top: 5px;
+       color:white;
+       padding-right: 90px;
+       padding-left: 350px;
+       background-color: #262b28;
+       height: 30px;font-size: 16px;
+  	}
+
+  		</style>
+  
+<form style="width: 765px;" action="" method="post">
+  {% csrf_token %}
+  <div id="form1">
+  <header id="head">Send Email</header>
+  <div style="padding:10px;" >
+
+<p>
+Are you sure you want to send email to the selected User?
+</p>  
+  {% for order in orders %}
+    <p>
+      {{ order.name }}  -  {{ order.email }}
+    </p>
+    <input type="hidden" name="_selected_action" value="{{ order.pk }}" />
+  {% endfor %}
+
+  <input type="hidden" name="action" value="update_status" />
+
+</div>
+
+</div>
+ <br>
+  <input id="button" type="submit" name="apply" value="Send"/>
+
+</form>
+{% endblock %}

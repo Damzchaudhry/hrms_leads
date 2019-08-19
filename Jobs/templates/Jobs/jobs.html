@@ -1,0 +1,804 @@
+{% extends "Jobs/includes/bars.html" %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% block body %}
+
+
+
+
+                    <div class="row">
+                        <div class="col-sm-5 col-4">
+                            <h4 class="page-title">Jobs</h4>
+                        </div>
+                        <div class="col-sm-7 col-8 text-right m-b-30">
+                            <a  id="add" href="#addjob" class="btn add-btn" data-toggle="modal" data-target="#addjob"><i class="fa fa-plus"></i> Add Job</a>
+                        </div>
+                    </div>
+                    <!-- /Page Title -->
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table table-striped custom-table mb-0 datatable" id="bookdata">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Job Title</th>
+                                            <th>Department</th>
+                                            <th>Start Date</th>
+                                            <th>Expire Date</th>
+                                            <th class="text-center">Job Type</th>
+                                            <th class="text-center">Status</th>
+                                            <th>Applicants</th>
+                                            <th class="text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if quersets %}
+                                        {% for quersets in quersets%}
+                                        <tr>
+                                             {% csrf_token %}
+                                            <td>{{quersets.id}}</td>
+                                            <td><a href="{% url 'details' quersets.id %}">{{quersets.title}}</a></td>
+                                            <td>{{quersets.dept}}</td>
+                                            <td>{{quersets.start_date}}</td>
+                                            <td>{{quersets.end_date}}</td>
+                                            <td class="text-center">
+                                                <div class="dropdown action-label">
+                                                    <a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fa fa-dot-circle-o text-danger"></i> {{quersets.job_type}}
+                                                    </a>
+                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                        <a class="dropdown-item" href="#"><i class="fa fa-dot-circle-o text-info"></i> Full Time</a>
+                                                        <a class="dropdown-item" href="#"><i class="fa fa-dot-circle-o text-success"></i> Part Time</a>
+                                                        <a class="dropdown-item" href="#"><i class="fa fa-dot-circle-o text-danger"></i> Internship</a>
+                                                        <a class="dropdown-item" href="#"><i class="fa fa-dot-circle-o text-warning"></i> Temporary</a>
+                                                        <a class="dropdown-item" href="#"><i class="fa fa-dot-circle-o text-warning"></i> Other</a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="dropdown action-label">
+                                                    <a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fa fa-dot-circle-o text-danger"></i> {{quersets.status}}
+                                                    </a>
+                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                        <a class="dropdown-item" href="#"><i class="fa fa-dot-circle-o text-info"></i> Open</a>
+                                                        <a class="dropdown-item" href="#"><i class="fa fa-dot-circle-o text-success"></i> Closed</a>
+                                                        <a class="dropdown-item" href="#"><i class="fa fa-dot-circle-o text-danger"></i> Cancelled</a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><a href="job-applicants.html" class="btn btn-sm btn-primary">3 Candidates</a></td>
+                                            <td class="text-right">
+                                                <div class="dropdown dropdown-action">
+                                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                                    <div class="dropdown-menu dropdown-menu-right" style="width: 40px;">
+                                                        
+      <!-- ------------------------------------------------------------------Edit --------------------- -->
+
+
+                               <i class="fa fa-edit icon"></i> 
+
+                              <input type="button" data-toggle="modal" data-target="#edit_Jobs" value="Edit" 
+                              onclick="editJobs('{{quersets.id}}')"  style="background-color: transparent;border:none;padding-left: 10px;" data-id={{ quersets.id }} style="background-color: transparent;border:none;padding-left: 10px;">
+                               <br>
+
+
+
+
+
+<!-- ---------------------------------------------------------------------Delete----------------------- -->
+                                 <i class="fa fa-remove icon"></i> 
+
+                                                        
+                                                        <input style="background-color: transparent;border:none;padding-left: 10px;" type="button" class="delete-button " id="{{ quersets.id }}"
+                               name="delete-button" value="Delete" data-toggle="modal"
+                               data-target="#datamodel{{ quersets.id }}" data-id={{ quersets.id }}>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        {% endif %}
+                                        </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Page Content -->
+                
+
+
+
+
+
+
+                <!-- Edit Job Modal -->
+                <div id="edit_Jobs" class="modal custom-modal fade" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Edit Job</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+
+  <input type="hidden" id="id1" name="id">
+                                <form id="Update" method="post" name="Update">
+
+
+                                   
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                              
+                                          <label for="title">Job Title</label>
+                                                <input id="id_title1" name="title" class="form-control" type="text">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                Department (<label  style="color:red;font-size:12px;" id="id_dept1" for="dept"></label>)
+                                                <select  name="dept" class="select">
+                                                  
+                                                   
+                                                            <option>-</option>
+                                 {% if dept %}
+                                        {% for dept in dept %}
+                                             <option value="{{dept.id}}" >{{dept.name}}</option>
+                                                       {% endfor %}
+                                        {% endif %}
+                                               
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                      {% csrf_token %}
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="job_location">Job Location</label>
+                                                <input id="id_job_location1" 
+                                                 name="job_location" class="form-control" type="text">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="vacancy">No of Vacancies</label>
+                                                <input id="id_vacancy1" name="vacancy" class="form-control" type="text">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="exp">Experience</label>
+                                                <input id="id_exp1" name="exp" class="form-control" type="text">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label  for="skill">Skills</label>
+                                                <input id="id_skill1" name="skill" class="form-control" type="text">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="salary_from">Salary From</label>
+                                                <input id="id_salary_from1" name="salary_from" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="salary_to">Salary To</label>
+                                                <input id="id_salary_to1" name="salary_to" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                               Job Type (<label id="id_job_type1" style="color:red;font-size:12px;" for="job_type"></label>)
+                                                <select  name="job_type" class="select">
+                                                
+                                                                     <option value="Full-Time">----</option>
+                                        {% if types %}
+                                            {% for types in types %}
+                                             
+                                             <option value="{{types.id}}">{{types.name}}</option>
+                                            
+                                            {% endfor %}
+                                        {% endif %}
+                                        
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                              Status (<label id="id_status1" style="color:red;font-size:12px;" for="status"></label>)
+                                                <select  name="status" class="select">
+                                                                       <option value="Full-Time">----</option>
+                                        {% if status %}
+                                            {% for status in status %}
+                                             
+                                             <option value="{{status.id}}">{{status.name}}</option>
+                                            
+                                            {% endfor %}
+                                        {% endif %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="desc">Description</label>
+                                                <textarea id="id_desc1" name="desc"
+                                                 class="form-control"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="contact">Contact no.</label>
+                                                <input id="contact_id1" name="contact" type="text" class="form-control" >
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="email">Email</label>
+                                                <input id="email_id1" name="email" type="email"  class="form-control">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="end_date1">Expired Date</label>
+                                                  <br>
+                                                <input id="id_end_date1" type="Date" name="end_date"  class="form-control">
+                                            </div>
+                                        </div> 
+                                    </div>
+                                    <div class="submit-section">
+                                     
+
+                                        <input type="button"  onclick="update()" class="btn btn-primary submit-btn"/>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Edit Job Modal -->
+
+
+<script type="text/javascript">
+       function update(){
+
+    
+         // {
+        var value=document.getElementById("id1").value
+        alert(value)
+
+
+
+        // alert(value)
+     $.ajax({
+
+            type: 'POST',
+            url: 'update/'+value+"/",
+            data:  $("#Update").serialize(),
+            dataType: 'json',
+           
+        }).done(function (data) {
+            $(function () {
+                 window.location.reload();
+               
+            });
+        });
+    }
+</script>
+
+
+
+
+
+
+
+                <!-- Add Job Modal -->
+                <div id="addjob" class="modal custom-modal fade" role="dialog" >
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Add Job</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post" name="create_bookfrm" id="create_bookfrm" action="{% url 'create_book_record' %}">
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="title">Job Title</label>
+                                                <input id="#id_title" name="title" class="form-control" type="text">
+                                            </div>
+                                        </div>
+                                  
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Derpartment &nbsp <a href="#"data-toggle="modal" 
+                                                data-target="#add_dept"
+                                                
+                                                style="background-color: 
+                                                transparent;border:none;
+                                                padding-left: 10px;" >
+                                                <i class="fa fa-plus"></i></a></label>
+                                        
+                                                <select id="id_dept" name="dept" class="select">
+                                                    <option>-</option>
+                                 {% if dept %}
+                                        {% for dept in dept %}
+                                             <option value="{{dept.id}}" >{{dept.name}}</option>
+                                                       {% endfor %}
+                                        {% endif %}
+                                               
+                                                </select>
+                                        
+                                            </div>
+                                        </div>
+                                      
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="job_location">Job Location</label>
+                                                <input id="id_job_location" 
+                                                 name="job_location" class="form-control" type="text">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="vacancy">No of Vacancies</label>
+                                                <input id="id_vacancy" name="vacancy" class="form-control" type="text">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="exp">Experience</label>
+                                                <input id="id_exp" name="exp" class="form-control" type="text">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                         <div class="form-group">
+                                                <label for="end_date">Expired Date</label>
+                                                <br>
+                                                <input style="width: 355px;height: 42px; border:1px solid #d5dbe3; 
+                                                border-radius: 4px;align-self: center;" type="Date" name="end_date">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="salary_from">Salary From</label>
+                                                <input id="id_salary_from" name="salary_from" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="salary_to">Salary To</label>
+                                                <input id="id_salary_to" name="salary_to" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="contact">Contact no.</label>
+                                                <input id="id_contact" name="contact" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="email">Email</label>
+                                                <input id="id_email" name="email" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="job_type">Job Type
+                                                 &nbsp <a href="#"data-toggle="modal" 
+                                                data-target="#add_type"
+                                                
+                                                style="background-color: 
+                                                transparent;border:none;
+                                                padding-left: 10px;" >
+                                                <i class="fa fa-plus"></i></a></label></label>
+                                                <select id="id_job_type" name="job_type" class="select">
+                                                    <option value="Full-Time">----</option>
+                                        {% if types %}
+                                            {% for types in types %}
+                                             
+                                             <option value="{{types.id}}">{{types.name}}</option>
+                                            
+                                            {% endfor %}
+                                        {% endif %}
+                                        
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="status">Status &nbsp <a href="#"data-toggle="modal" 
+                                                data-target="#add_status"
+                                                
+                                                style="background-color: 
+                                                transparent;border:none;
+                                                padding-left: 10px;" >
+                                                <i class="fa fa-plus"></i></a></label></label>
+
+                                                <select id="id_status" name="status" class="select">
+                                                          <option value="Full-Time">----</option>
+                                        {% if status %}
+                                            {% for status in status %}
+                                             
+                                             <option value="{{status.id}}">{{status.name}}</option>
+                                            
+                                            {% endfor %}
+                                        {% endif %}
+                                             
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                           <div class="form-group">
+                                                <label for="desc">Description</label>
+                                                <textarea id="id_desc" name="desc" class="form-control"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+
+                                            <div class="form-group">
+                                                <label id="id_skill" for="skill">Skills</label>
+                                                <textarea name="skill" class="form-control" type="text"></textarea> 
+                                            </div>
+                                          
+                                        </div>
+                                    </div>
+                                
+                                    <div class="submit-section">
+                                        <button class="btn btn-primary submit-btn"  name="createbookfrmbtn" >Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Add Job Modal -->
+                
+
+
+
+
+
+
+
+
+
+
+
+<!-- ------------------------------------------Add_Dept-------------------------------- -->
+
+  <div class="modal" id="add_dept">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+
+       <div class="modal-header">
+                                <h5 class="modal-title">Add Dept</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post" id="ADD_DEPT">
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="name">Department Name</label>
+                                                <input  name="name" class="form-control" type="text">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="submit-section">
+                                        <input type="button" class="btn btn-info submit-btn"
+                                         onclick="create_dept()"  value="Add-Dept" />
+                                    </div>
+                                </form>
+                            </div>
+    </div>
+        
+    </div>
+      
+  </div>
+
+    <script type="text/javascript">
+       function create_dept(){
+
+    
+    
+     $.ajax({
+
+            type: 'POST',
+            url: "add_dept/",
+            data:  $("#ADD_DEPT").serialize(),
+            dataType: 'json',
+           
+        }).done(function (data) {
+            $(function () {
+                 window.location.reload();
+               
+            });
+        });
+    }
+</script>
+
+<!-- --------------------------------------------------/ADD DEPT==================== -->
+
+
+
+<!-- ------------------------------------------Add_Type-------------------------------- -->
+
+  <div class="modal" id="add_type">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+
+       <div class="modal-header">
+                                <h5 class="modal-title">Add JOB TYPE</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post" id="Add_Type">
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="name">Job Type</label>
+                                                <input  name="name" class="form-control" type="text">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="submit-section">
+                                        <input type="button" class="btn btn-info submit-btn"
+                                         onclick="create_type()"  value="Add-Dept" />
+                                    </div>
+                                </form>
+                            </div>
+    </div>
+        
+    </div>
+      
+  </div>
+
+    <script type="text/javascript">
+       function create_type(){
+
+    
+    
+     $.ajax({
+
+            type: 'POST',
+            url: "add_job_type/",
+            data:  $("#Add_Type").serialize(),
+            dataType: 'json',
+           
+        }).done(function (data) {
+            $(function () {
+                 window.location.reload();
+               
+            });
+        });
+    }
+</script>
+
+<!-- --------------------------------------------------/ADD Type==================== -->
+
+   
+<!-- ------------------------------------------Add_Status-------------------------------- -->
+
+  <div class="modal" id="add_status">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+
+       <div class="modal-header">
+                                <h5 class="modal-title">Add JOB TYPE</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post" id="Add_Status">
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="name">Job Status</label>
+                                                <input  name="name" class="form-control" type="text">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="submit-section">
+                                        <input type="button" class="btn btn-info submit-btn"
+                                         onclick="create_status()"  value="Add Status" />
+                                    </div>
+                                </form>
+                            </div>
+    </div>
+        
+    </div>
+      
+  </div>
+
+    <script type="text/javascript">
+       function create_status(){
+
+    
+    
+     $.ajax({
+
+            type: 'POST',
+            url: "add_status/",
+            data:  $("#Add_Status").serialize(),
+            dataType: 'json',
+           
+        }).done(function (data) {
+            $(function () {
+                 window.location.reload();
+               
+            });
+        });
+    }
+</script>
+
+<!-- --------------------------------------------------/ADD Type==================== -->
+
+   
+  <!-- ------------------------------------- Edit job Script----------------------------- -->
+
+
+
+<script type="text/javascript">
+    
+    function editJobs(value)
+
+  {
+   
+
+    $.ajax({
+    
+      url:"edit/"+value+"/",
+     
+      method:"get",
+      contentType: "json",
+      cache:false,
+    
+      processData: false, 
+      dataType:"json",
+
+      success:function(data1)
+    {
+     
+
+      // console.log(data1);
+      $('#id_title1').val(data1.title);
+      document.getElementById("id_dept1").innerHTML=data1.dept; 
+      document.getElementById("id_status1").innerHTML=data1.status; 
+      document.getElementById("id_job_type1").innerHTML=data1.job_type; 
+
+
+
+      // $("#id_dept1").val(data1.dept);
+
+
+      $("#id_job_location1").val(data1.job_location);
+      $("#id_vacancy1").val(data1.vacancy);
+      $("#id_exp1").val(data1.exp);
+
+      $('#id_skill1').val(data1.skill);
+      $("#id_salary_from1").val(data1.salary_from);
+      $("#id_salary_to1").val(data1.salary_to);
+      $("#id_job_type1").val(data1.job_type);
+
+
+      // $('#id_status1').val(data1.status);
+      $("#id_start_date1").val(data1.start_date);
+      $("#id_end_date1").val(data1.end_date);
+      $("#id_desc1").val(data1.desc);
+      $("#id1").val(data1.id);
+      $("#email_id1").val(data1.email);
+      $("#contact_id1").val(data1.contact);
+      csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+
+     
+
+    }
+   });
+
+   
+
+ }
+
+
+
+
+</script>
+
+<!--     <script type="text/javascript">
+           
+    function get()
+
+  {
+   
+
+    $.ajax({
+    
+      url:"get/",
+     
+      method:"get",
+      contentType: "json",
+      cache:false,
+    
+      processData: false, 
+      dataType:"json",
+
+      success:function(data1)
+    {
+     
+
+    }
+   });
+
+   
+
+ }
+    </script>  -->  
+        {% endblock %}
+
+
+
+
+
+
